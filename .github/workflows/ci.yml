@@ -31,4 +31,11 @@ jobs:
 
       - name: Testler (pytest)
         run: |
-          pytest tests -q || ([ -z "$(ls -A tests/*.py 2>/dev/null | grep -v __init__)" ] && echo "Henüz test yok, atlanıyor." || exit 1)
+          status=0
+          pytest tests -q || status=$?
+          # exit 5 = "toplanacak test yok" -> başarı say (üst seviye testler henüz yok)
+          if [ "$status" -eq 5 ]; then
+            echo "Üst seviye tests/ içinde test yok, adım atlandı."
+            exit 0
+          fi
+          exit "$status"
