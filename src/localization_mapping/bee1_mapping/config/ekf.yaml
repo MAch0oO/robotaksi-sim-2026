@@ -1,0 +1,71 @@
+### ekf.yaml ###
+# BEE1 - Yerel Sensör Füzyonu (robot_localization / EKF) - ROS 2 Foxy
+#
+# KTR Rapor 7.2'ye uygun YEREL füzyon: Tekerlek odometrisi + IMU + ZED2 görsel
+# odometri verilerini birleştirip SLAM'in kullanacağı KARARLI 'odom -> base_link'
+# dönüşümünü üretir.
+#
+# Veri akışı:  /odom + /imu/data + /zed2/zed_node/odom  --EKF-->  odom->base_link
+#
+# NOT: GPS global füzyonu (ekf_global + navsat) HARİTALAMA fazında kullanılmaz;
+#      o, harita çıktıktan sonraki LOKALİZASYON paketine aittir. Burada sadece
+#      yerel EKF vardır -> 'map -> odom' SLAM tarafından yayınlanır, çakışma olmaz.
+
+ekf_filter_node:
+  ros__parameters:
+    use_sim_time: true            # Gazebo saati -> ŞART
+    frequency: 30.0
+    sensor_timeout: 0.1
+    two_d_mode: true              # kara aracı -> 2D (z, roll, pitch sıfırlanır)
+    publish_tf: true              # odom -> base_link TF'ini EKF yayınlar
+
+    map_frame: map
+    odom_frame: odom
+    base_link_frame: base_link
+    world_frame: odom             # YEREL EKF -> world_frame = odom
+
+    # ============================================================
+    #  odom0: Tekerlek Odometrisi (Gazebo diff/ackermann plugin -> /odom)
+    #  >>> Arkadaşının Gazebo odometri topic'iyle EŞLE (genelde /odom)
+    #  Kullanılan: vx, vy, vyaw
+    # ============================================================
+    odom0: /odom
+    odom0_config: [false, false, false,
+                   false, false, false,
+                   true,  true,  false,
+                   false, false, true,
+                   false, false, false]
+    odom0_differential: false
+    odom0_relative: false
+    odom0_queue_size: 10
+
+    # ============================================================
+    #  imu0: IMU (Xsens MTi-680 / ZED2 dahili IMU -> /imu/data)
+    #  Kullanılan: yaw, vyaw, ax
+    # ============================================================
+    imu0: /imu/data
+    imu0_config: [false, false, false,
+                  false, false, true,
+                  false, false, false,
+                  false, false, true,
+                  true,  false, false]
+    imu0_differential: false
+    imu0_relative: true
+    imu0_remove_gravitational_acceleration: true
+    imu0_queue_size: 10
+
+    # ============================================================
+    #  odom1: ZED2 Görsel Odometri (rapor şartı -> /zed2/zed_node/odom)
+    #  Kullanılan: x, y, yaw  ->  DIFFERENTIAL modda (mutlak konum çakışmasını önler)
+    #  >>> ZED2 VO topic'i Gazebo'da YOKSA bu bloğu yorum satırı yap.
+    #      (Gazebo'da VO üretmek için rtabmap_odom düğümü gerekir.)
+    # ============================================================
+    odom1: /zed2/zed_node/odom
+    odom1_config: [true,  true,  false,
+                   false, false, true,
+                   false, false, false,
+                   false, false, false,
+                   false, false, false]
+    odom1_differential: true      # KRİTİK: tekerlek odometrisiyle çakışmayı önler
+    odom1_relative: false
+    odom1_queue_size: 10

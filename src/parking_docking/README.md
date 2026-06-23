@@ -1,5 +1,8 @@
 # Park ve Durak Algoritmaları
 
-Otonom park, durak/yolcu operasyonları ve PID besleme.
+| Bileşen | Açıklama |
+|---|---|
+| `otonom_park/` | Otonom park: `direct_park.py` + `park_perception` ROS 2 paketi (LIDAR slot tespiti, launch'lar) |
+| `durak_algorithm.py` | Durak/yolcu operasyonu manevra mantığı |
 
-Kodlar bu dizine modüler olarak eklenecektir.
+Park manevra hızı ve yanal kontrol, aracın yerleşik PID kontrolcülerine hedef değer besler.
