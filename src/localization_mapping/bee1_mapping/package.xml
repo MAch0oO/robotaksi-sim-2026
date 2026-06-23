@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>bee1_mapping</name>
+  <version>0.1.0</version>
+  <description>
+    BEE1 otonom araç - Haritalama (SLAM) paketi.
+    slam_toolbox tabanlı 2D occupancy grid haritalama. ROS 2 Foxy.
+  </description>
+  <maintainer email="kadirdede111@gmail.com">Atlas Otonom</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <!-- Çalışma zamanı bağımlılıkları -->
+  <exec_depend>slam_toolbox</exec_depend>
+  <exec_depend>nav2_map_server</exec_depend>
+  <exec_depend>robot_localization</exec_depend>
+  <exec_depend>pointcloud_to_laserscan</exec_depend>
+  <exec_depend>rviz2</exec_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
