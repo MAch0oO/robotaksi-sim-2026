@@ -1,0 +1,32 @@
+### pointcloud_to_laserscan.yaml ###
+# BEE1 - Velodyne 3D nokta bulutunu 2D LaserScan'e çevirir.
+# slam_toolbox 2D çalıştığı için Velodyne'in /velodyne_points (PointCloud2)
+# verisini /scan (LaserScan) formatına dönüştürmek ZORUNLUDUR.
+#
+# Akış:  /velodyne_points (PointCloud2)  -->  /scan (LaserScan)  -->  slam_toolbox
+
+pointcloud_to_laserscan_node:
+  ros__parameters:
+    use_sim_time: true
+
+    # Taramanın üretileceği TF frame'i (araç gövde frame'i).
+    # >>> Arkadaşının Gazebo modeline göre KONTROL ET (base_link).
+    target_frame: base_link
+    transform_tolerance: 0.05
+
+    # Zemin ve tavan yansımalarını ele: sadece bu yükseklik bandı taranır.
+    min_height: -0.20
+    max_height: 1.50
+
+    # 360° tarama (VLP-16 tam tur). Radyan cinsinden.
+    angle_min: -3.14159       # -180°
+    angle_max: 3.14159        # +180°
+    angle_increment: 0.0087   # ~0.5° çözünürlük
+    scan_time: 0.1            # 10 Hz
+
+    # Mesafe sınırları (VLP-16 menziline göre ayarla).
+    range_min: 0.5
+    range_max: 30.0
+
+    use_inf: true             # menzil dışını +sonsuz olarak işaretle
+    # Aynı açıya düşen birden fazla noktadan en yakını alınır.

@@ -1,0 +1,82 @@
+slam_toolbox:
+  ros__parameters:
+
+    # ============================================================
+    #  ENTEGRASYON AYARLARI
+    #  >>> Arkadaşının Gazebo kurulumuna göre KONTROL EDİLECEK <<<
+    #  Bu 5 satır yanlışsa SLAM çalışmaz.
+    # ============================================================
+    use_sim_time: true          # Gazebo simülasyon saatini kullan -> ŞART
+    odom_frame: odom            # Gazebo'nun yayınladığı odometri TF frame adı
+    map_frame: map              # Harita frame'i (genelde sabit: map)
+    base_frame: base_link       # Araç gövde frame adı
+    scan_topic: /scan           # LIDAR'ın yayınladığı LaserScan topic adı
+
+    # ============================================================
+    #  SLAM MODU
+    # ============================================================
+    mode: mapping               # Haritalama modu (localization değil)
+
+    # ============================================================
+    #  HARİTA PARAMETRELERİ
+    # ============================================================
+    resolution: 0.05            # Harita çözünürlüğü (m/hücre). Park hassasiyeti için 0.05 iyi
+    max_laser_range: 20.0       # LIDAR menzili (VLP-16 için ~20-100 m; Gazebo modeline göre ayarla)
+    map_update_interval: 5.0    # Harita kaç saniyede bir güncellensin
+    transform_publish_period: 0.02   # map->odom TF yayın periyodu (50 Hz)
+    debug_logging: false
+    throttle_scans: 1
+    minimum_time_between_scans: 0.5
+
+    # ============================================================
+    #  TARAMA EŞLEŞTİRME (scan matching) / GÜNCELLEME EŞİKLERİ
+    #  Araç bu kadar yol/açı değiştirmeden yeni tarama işlenmez.
+    # ============================================================
+    minimum_travel_distance: 0.5     # m
+    minimum_travel_heading: 0.5      # rad
+    scan_buffer_size: 10
+    scan_buffer_maximum_scan_distance: 10.0
+    link_match_minimum_response_fine: 0.1
+    link_scan_maximum_distance: 1.5
+
+    # ============================================================
+    #  LOOP CLOSURE (çevrim kapama) - haritanın tutarlı kapanması
+    # ============================================================
+    do_loop_closing: true
+    loop_search_maximum_distance: 3.0
+    loop_match_minimum_chain_size: 10
+    loop_match_maximum_variance_coarse: 3.0
+    loop_match_minimum_response_coarse: 0.35
+    loop_match_minimum_response_fine: 0.45
+    loop_search_space_dimension: 8.0
+    loop_search_space_resolution: 0.05
+    loop_search_space_smear_deviation: 0.03
+
+    # ============================================================
+    #  KORELASYON ARAMA UZAYI (scan matcher ince ayar)
+    # ============================================================
+    correlation_search_space_dimension: 0.5
+    correlation_search_space_resolution: 0.01
+    correlation_search_space_smear_deviation: 0.1
+
+    # ============================================================
+    #  CERES SOLVER (optimizasyon motoru)
+    # ============================================================
+    solver_plugin: solver_plugins::CeresSolver
+    ceres_linear_solver: SPARSE_NORMAL_CHOLESKY
+    ceres_preconditioner: SCHUR_JACOBI
+    ceres_trust_strategy: LEVENBERG_MARQUARDT
+    ceres_dogleg_type: TRADITIONAL_DOGLEG
+    ceres_loss_function: None
+
+    # ============================================================
+    #  TARAMA EŞLEŞTİRME CEZA / ÇÖZÜNÜRLÜK PARAMETRELERİ
+    # ============================================================
+    distance_variance_penalty: 0.5
+    angle_variance_penalty: 1.0
+    fine_search_angle_offset: 0.00349
+    coarse_search_angle_offset: 0.349
+    coarse_angle_resolution: 0.0349
+    minimum_angle_penalty: 0.9
+    minimum_distance_penalty: 0.5
+    use_response_expansion: true
