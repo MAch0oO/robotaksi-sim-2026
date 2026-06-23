@@ -1,3 +1,8 @@
+# NOT: Bu dosya durak manevrası mantığının bir parçasıdır (fragment).
+# Bağımsız çalıştırma için ilgili düğüme entegre edilmelidir.
+import cv2
+import numpy as np
+
 def _durak_manevra(self, frame, width, height):
         # ===== GİRİŞ AYARLARI =====
         KONUM_KARE = 7      # commit sonrası kaç kare DÜZ git (erken kırıp takılıyorsa ARTIR)
